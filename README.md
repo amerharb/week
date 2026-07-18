@@ -54,9 +54,10 @@ day of the week on the right.
   shuffled). Stuck? The give-up button (🤷‍♂️) reveals it and
   plays a give-up sound (tracked separately from mistakes). It runs through every
   day, with your progress (played,
-  mistakes, give-ups, time) shown live above the board next to the give-up
-  button; the final result stays there when the game ends. Press 🕹️ again to
-  stop early. Theme, first day and flight mode stay changeable
+  mistakes, give-ups, time) shown live in the app bar next to the round
+  buttons. When every day has been played the round is over — the clock
+  freezes and the score stays — but game mode stays on: ✋ stops a round
+  early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme, first day and flight mode stay changeable
   mid-game; the language list is locked. Needs at least one language visible.
 - First visit: the starting language and which languages are shown come from your
   browser's language settings.
