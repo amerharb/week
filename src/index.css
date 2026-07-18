@@ -1,0 +1,455 @@
+/*
+ * Color theming. Colors resolve via CSS `light-dark()`, driven by `color-scheme`.
+ * Default `color-scheme: light dark` follows the OS; the theme toggle overrides it
+ * by setting `data-theme` on <html> (see SettingsPanel + the init script in index.html).
+ */
+:root {
+	color-scheme: light dark;
+
+	--bg: light-dark(#ffffff, #121212);
+	--fg: light-dark(#1a1a1a, #e6e6e6);
+	--border: light-dark(#cccccc, #3a3a3a);
+	--surface-hover: light-dark(#ececec, #2c2c2c);
+	--button-bg: light-dark(#f0f0f0, #2a2a2a);
+	--button-fg: light-dark(#1a1a1a, #e6e6e6);
+}
+
+:root[data-theme='light'] {
+	color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+	color-scheme: dark;
+}
+
+* {
+	user-select: none;
+}
+
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+	'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+	sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-color: var(--bg);
+	color: var(--fg);
+}
+
+h1 {
+	align-content: center;
+	font-size: 2rem;
+	font-weight: bold;
+	text-align: center;
+}
+
+button {
+	font-family: inherit;
+	font-size: 60px;
+	border-radius: 0.45rem;
+	border: 1px solid var(--border);
+	cursor: pointer;
+	padding: 15px 15px;
+	text-align: center;
+	text-decoration: none;
+	margin: 10px;
+	align-content: center;
+	background-color: var(--button-bg);
+	color: var(--button-fg);
+}
+
+button:hover {
+	background-color: var(--surface-hover);
+}
+
+button:active {
+	transform: scale(0.95);
+	transition: transform 0.1s;
+}
+
+/* a day card on the main screen: a neutral tile showing the day number (1–7) */
+.button-day {
+	position: relative;
+	width: 140px;
+	height: 140px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* the big day number (Sunday = 1 … Saturday = 7) that faces the player */
+.day-number {
+	font-size: 64px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+}
+
+/* keep the button looking pressed while its sound is playing */
+.button-day.playing {
+	transform: scale(0.95);
+	box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.45);
+	background-color: var(--surface-hover);
+}
+
+/* small play indicator shown in the corner of the playing card */
+.play-icon {
+	position: absolute;
+	top: 6px;
+	right: 8px;
+	font-size: 16px;
+	line-height: 1;
+	color: var(--fg);
+}
+
+/* a solved or given-up card is disabled and dimmed during the game */
+.button-day:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+/* a card guessed wrong this round: temporarily disabled but kept legible, with a 👎 */
+.button-day.wrong:disabled {
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+
+/* corner state marker (👍 solved / 🤷‍♂️ given up / 👎 wrong), with a soft shadow to stay legible */
+.swatch-mark {
+	position: absolute;
+	top: 6px;
+	right: 8px;
+	font-size: 16px;
+	line-height: 1;
+	text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+/* game-mode toggle, sits in the top control bar */
+.game-toggle {
+	font-size: 20px;
+	line-height: 1;
+	padding: 6px 10px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+.game-toggle.on {
+	transform: scale(0.95);
+	box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+	background-color: var(--surface-hover);
+}
+
+.game-toggle:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+/* pulse while pre-loading the game's sounds */
+@media (prefers-reduced-motion: no-preference) {
+	.game-toggle.busy {
+		animation: flight-mode-pulse 1s ease-in-out infinite;
+	}
+}
+
+/* give-up button, shown centered below the score during a game */
+.game-giveup {
+	display: block;
+	margin: 4px auto 0;
+	font-size: 32px;
+	line-height: 1;
+	padding: 10px 20px;
+	border-radius: 12px;
+}
+
+/* thumbs up/down that flashes once over the board after a guess */
+.game-feedback {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30vmin;
+	pointer-events: none;
+	z-index: 1200;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.game-feedback {
+		animation: game-feedback-flash 0.7s ease-out forwards;
+	}
+}
+
+@keyframes game-feedback-flash {
+	0% { opacity: 0; transform: scale(0.6); }
+	25% { opacity: 1; transform: scale(1); }
+	70% { opacity: 1; transform: scale(1); }
+	100% { opacity: 0; transform: scale(1.1); }
+}
+
+/* end-of-game result: score, mistakes, give-ups, time */
+.game-result {
+	display: flex;
+	gap: 20px;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.5rem;
+	font-weight: bold;
+	font-variant-numeric: tabular-nums;
+	flex-wrap: wrap;
+}
+
+/* fixed top-right control bar: game toggle, language, settings */
+.top-controls {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	z-index: 1000;
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+.language-select {
+	padding: 6px 10px;
+	border-radius: 6px;
+	border: 1px solid var(--border);
+	font-family: inherit;
+	font-size: 16px;
+	cursor: pointer;
+	background-color: var(--button-bg);
+	color: var(--button-fg);
+}
+
+/* Settings: a gear button that opens a small panel below it */
+.settings {
+	position: relative;
+}
+
+.settings-button {
+	font-size: 20px;
+	line-height: 1;
+	padding: 6px 10px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+/* keep the gear looking pressed while the panel is open */
+.settings-button.open {
+	transform: scale(0.95);
+	box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+	background-color: var(--surface-hover);
+}
+
+.settings-panel {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	margin-top: 8px;
+	width: 260px;
+	max-height: calc(100vh - 80px);
+	overflow-y: auto;
+	padding: 16px;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	background-color: var(--bg);
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+	text-align: left;
+}
+
+.settings-checklist {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	max-height: 180px;
+	overflow-y: auto;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	padding: 6px 8px;
+}
+
+/* small select-all / deselect-all buttons above each list */
+.settings-select-all {
+	display: flex;
+	gap: 6px;
+}
+
+.settings-select-all button {
+	font-size: 12px;
+	line-height: 1;
+	padding: 4px 8px;
+	margin: 0;
+	border-radius: 5px;
+}
+
+.settings-check {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	padding: 3px 0;
+	cursor: pointer;
+	user-select: none;
+}
+
+.settings-check input {
+	margin: 0;
+	cursor: pointer;
+}
+
+.settings-row {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.settings-segmented {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+}
+
+/* small leading indicator (e.g. the sort ⇵) inside a segmented row */
+.settings-segmented-icon {
+	font-size: 20px;
+	line-height: 1;
+	flex: none;
+}
+
+.settings-segmented .segment {
+	flex: 1;
+	font-size: 20px;
+	font-weight: 500;
+	padding: 8px 4px;
+	margin: 0;
+	border-radius: 6px;
+	white-space: nowrap;
+}
+
+.settings-segmented .segment.selected {
+	background-color: var(--surface-hover);
+	border-color: var(--fg);
+	font-weight: 700;
+}
+
+/* days as a scrollable grid of number tiles; click toggles visibility */
+.settings-day-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+	gap: 6px;
+	max-height: 190px;
+	overflow-y: auto;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 8px;
+}
+
+.day-toggle {
+	aspect-ratio: 1;
+	padding: 0;
+	margin: 0;
+	border-radius: 6px;
+	border: 1px solid var(--border);
+	font-size: 18px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.day-toggle.hidden {
+	opacity: 0.35;
+}
+
+/* controls locked while a game is running */
+.day-toggle:disabled,
+.settings-select-all button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.day-toggle.hidden:disabled {
+	opacity: 0.2;
+}
+
+.settings-check:has(input:disabled) {
+	cursor: default;
+	opacity: 0.6;
+}
+
+/* flight mode + cache info on one row */
+.settings-cache-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 0 12px;
+}
+
+.settings-cache-count {
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+	flex: 1;
+}
+
+.settings-cache-clear {
+	font-size: 16px;
+	line-height: 1;
+	padding: 6px 10px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+.settings-cache-clear:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+/* flight mode toggle: sticky icon button, pressed while on, pulsing while downloading */
+.settings-flight-mode {
+	display: block;
+	font-size: 20px;
+	line-height: 1;
+	padding: 8px 12px;
+	margin: 0;
+	border-radius: 6px;
+}
+
+.settings-flight-mode.on {
+	transform: scale(0.95);
+	box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+	background-color: var(--surface-hover);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.settings-flight-mode.busy {
+		animation: flight-mode-pulse 1s ease-in-out infinite;
+	}
+}
+
+@keyframes flight-mode-pulse {
+	50% {
+		opacity: 0.4;
+	}
+}
+
+/* small about line at the very bottom of the panel */
+.settings-about {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid var(--border);
+	font-size: 12px;
+	color: var(--muted, #888);
+	font-variant-numeric: tabular-nums;
+}
+
+.settings-about a {
+	color: var(--link, #4a6fa5);
+	text-decoration: none;
+}
+
+.settings-about a:hover {
+	text-decoration: underline;
+}
