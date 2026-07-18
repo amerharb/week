@@ -12,6 +12,9 @@
   1–7 when no language is visible), and a sound language (🗣️) that sets what is
   spoken on click / in the game and the name written under the cards. They can be
   the same or different (e.g. read the days in English while hearing German).
+- When the display language is right-to-left (Arabic), the day cards are laid out
+  right-to-left too, so the week reads in the language's direction (the first day
+  on the right).
 - Languages: English, Arabic, German and Swedish (spoken day names as AAC files
   under `public/sound/lang/`).
 - Settings (⚙️): theme (system / light / dark, system is the default), plus a

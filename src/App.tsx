@@ -44,9 +44,9 @@ function playFx(name: 'correct' | 'wrong' | 'giveup') {
 function App() {
 	// everything the build supports (after the beta feature flag)
 	const ALL_DAYS: Day[] = [sunday, monday, tuesday, wednesday, thursday, friday, saturday].filter(isVisible)
-	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean }[] = [
+	const LANGUAGE_DEFS: { code: Language, display: string, beta?: boolean, rtl?: boolean }[] = [
 		{ code: 'en', display: 'English' },
-		{ code: 'ar', display: 'عربي' },
+		{ code: 'ar', display: 'عربي', rtl: true },
 		{ code: 'de', display: 'Deutsch' },
 		{ code: 'sv', display: 'Svenska' },
 	]
@@ -376,6 +376,9 @@ function App() {
 	}
 
 	const board = gameOn ? gameDays : DAYS
+	// lay the cards out right-to-left when the display language is RTL (e.g. Arabic),
+	// so the week reads in the display language's direction — the first day on the right
+	const boardDir = LANGUAGES.length > 0 && ALL_LANGUAGES.find(l => l.code === visualLang)?.rtl ? 'rtl' : 'ltr'
 
 	return (
 		<div className="Week">
@@ -441,7 +444,7 @@ function App() {
 					onClearCache={clearSoundCache}
 				/>
 			</div>
-			<hgroup>
+			<hgroup dir={boardDir}>
 				{board.map(d => {
 					const isGivenUp = gameOn && gaveUpCodes.includes(d.code)
 					const isSolved = gameOn && solved.includes(d.code) && !isGivenUp

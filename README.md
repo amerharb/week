@@ -36,6 +36,10 @@ learning them in German). Click a day card to hear its name in the sound languag
 and see that name written below; click the card again (▶ while it plays) to stop.
 If every language is hidden, the cards fall back to numbers and no sound plays.
 
+When the display language is right-to-left (Arabic), the day cards are laid out
+right-to-left as well, so the week reads in that language's direction — the first
+day of the week on the right.
+
 - Settings (⚙️ top right): theme (system / light / dark, system is the default),
   a language checklist to show/hide languages (with ✅/⬜ select-all/deselect-all
   buttons), a "first day of the week" dropdown (📅) that rotates the cards to
