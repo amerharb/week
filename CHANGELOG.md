@@ -5,6 +5,10 @@
 - Add `vercel.json` (framework Vite, output directory `dist`) so the Vercel
   deployment configuration is explicit and versioned, like the sister project
   Arqaam
+### Changed
+- Redraw the favicon in the sister projects' shared flat style: a flat
+  calendar page with a red header, binder rings and a bold 7 (for the seven
+  days), replacing the old white-and-blue outline calendar
 
 ## 0.14.0
 - Initial release, versioned 0.14.0 to align with the sister projects
