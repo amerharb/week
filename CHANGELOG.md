@@ -5,11 +5,15 @@
   [Colors](https://github.com/amerharb/colors) and
   [Flags](https://github.com/amerharb/flags).
 ### Added
-- Days of the week as numbered cards (1–7, starting on Sunday). Click a card to
-  hear its name spoken and see it written in the selected language; click again
-  (▶ while it plays) to stop.
-- Languages: English, Arabic, German and Swedish, with a language dropdown in the
-  top right (spoken day names as AAC files under `public/sound/lang/`).
+- Days of the week as cards (1–7, starting on Sunday). Click a card to hear its
+  name spoken and see it written; click again (▶ while it plays) to stop.
+- Two independent language dropdowns in the top right: a display language (👁️)
+  that sets the day name shown on each card (falling back to the plain day number
+  1–7 when no language is visible), and a sound language (🗣️) that sets what is
+  spoken on click / in the game and the name written under the cards. They can be
+  the same or different (e.g. read the days in English while hearing German).
+- Languages: English, Arabic, German and Swedish (spoken day names as AAC files
+  under `public/sound/lang/`).
 - Settings (⚙️): theme (system / light / dark, system is the default), plus a
   language show/hide checklist (with ✅/⬜ select-all/deselect-all buttons),
   persisted in localStorage.

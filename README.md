@@ -25,9 +25,16 @@ sound file name.
 - Swedish
 
 ## How it works
-Pick a language from the dropdown in the top right, then click a day card to hear
-its name spoken and see it written in that language. Click the card again (▶ while
-it plays) to stop.
+There are two language dropdowns in the top right:
+- 👁️ **Display language** — the day name shown on each card (and the labels in the
+  settings). Falls back to the plain day number (1–7) when no language is visible.
+- 🗣️ **Sound language** — what is spoken when you click a card (and what you guess
+  in the game), plus the name written under the cards on click.
+
+They can be the same or different (e.g. see the days in English while hearing and
+learning them in German). Click a day card to hear its name in the sound language
+and see that name written below; click the card again (▶ while it plays) to stop.
+If every language is hidden, the cards fall back to numbers and no sound plays.
 
 - Settings (⚙️ top right): theme (system / light / dark, system is the default),
   a language checklist to show/hide languages (with ✅/⬜ select-all/deselect-all
@@ -38,8 +45,9 @@ it plays) to stop.
   (IndexedDB) so they play offline; anything newly shown while it is on is
   downloaded right away. Turning it off keeps the cached files (🗑️ clears them).
 - Game (🎮 in the top bar): start a guessing game — a random day name is spoken
-  and you tap the matching card (👍 correct, 👎 wrong). The cards stay in week
-  order (they are not shuffled). Stuck? The give-up button (🤷‍♂️) reveals it and
+  in the sound language and you tap the matching card (which shows the display
+  language) — 👍 correct, 👎 wrong. The cards stay in week order (they are not
+  shuffled). Stuck? The give-up button (🤷‍♂️) reveals it and
   plays a give-up sound (tracked separately from mistakes). It runs through every
   day, then shows how many you played, your mistakes, give-ups, and your time;
   press 🎮 again to stop early. Theme, first day and flight mode stay changeable

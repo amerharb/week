@@ -78,12 +78,23 @@ button:active {
 	justify-content: center;
 }
 
-/* the big day number (Sunday = 1 … Saturday = 7) that faces the player */
+/* the big day number (Sunday = 1 … Saturday = 7) — the fallback card face when
+   no display language is visible */
 .day-number {
 	font-size: 64px;
 	font-weight: 700;
 	font-variant-numeric: tabular-nums;
 	line-height: 1;
+}
+
+/* the day name (in the display language) that faces the player when a language is shown */
+.day-label {
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.2;
+	padding: 0 4px;
+	text-align: center;
+	overflow-wrap: anywhere;
 }
 
 /* keep the button looking pressed while its sound is playing */
@@ -199,7 +210,7 @@ button:active {
 	flex-wrap: wrap;
 }
 
-/* fixed top-right control bar: game toggle, language, settings */
+/* fixed top-right control bar: game toggle, language pickers, settings */
 .top-controls {
 	position: fixed;
 	top: 10px;
@@ -208,6 +219,20 @@ button:active {
 	display: flex;
 	align-items: flex-start;
 	gap: 8px;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+/* an emoji-labelled language dropdown (👁️ display / 🗣️ sound) in the top bar */
+.lang-picker {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.lang-picker-icon {
+	font-size: 16px;
+	line-height: 1;
 }
 
 .language-select {
@@ -219,6 +244,11 @@ button:active {
 	cursor: pointer;
 	background-color: var(--button-bg);
 	color: var(--button-fg);
+}
+
+.language-select:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 
 /* Settings: a gear button that opens a small panel below it */

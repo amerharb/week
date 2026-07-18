@@ -95,7 +95,11 @@ function App() {
 			const want = lParam.split(',').map(s => s.trim()).filter(c => valid.has(c as Language))
 			const hiddenLanguages = ALL_LANGUAGES.map(l => l.code).filter(c => !want.includes(c))
 			loaded = { ...loaded, hiddenLanguages }
-			if (want.length > 0) setLang(want[0] as Language) // first listed = selected
+			if (want.length > 0) {
+				// first listed = selected for both the visual and hearing language
+				setVisualLang(want[0] as Language)
+				setHearingLang(want[0] as Language)
+			}
 		}
 
 		setSettings(loaded)
@@ -103,9 +107,16 @@ function App() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	// language of the displayed and spoken day name; defaults to the browser's
-	// preferred language on first load (the fallback effect below keeps it visible)
-	const [lang, setLang] = useState<Language>(() => preferredLanguage())
+	// two selected languages:
+	//   visualLang  — the display/app language: the day name shown on each card and
+	//                 the labels in the settings (first-day dropdown). Falls back to
+	//                 the plain day number (1–7) when no language is visible.
+	//   hearingLang — the sound language: what is played on click / in the game, what
+	//                 is written under the card on click, and what the player guesses.
+	// They may be the same. Both default to the browser's preferred language on first
+	// load (the fallback effect below keeps them pointing at a visible language).
+	const [visualLang, setVisualLang] = useState<Language>(() => preferredLanguage())
+	const [hearingLang, setHearingLang] = useState<Language>(() => preferredLanguage())
 	const [name, setName] = useState('')
 
 	const refreshCacheCount = useCallback(async () => {
@@ -141,9 +152,9 @@ function App() {
 	}, [refreshCacheCount])
 
 	const updateSettings = (next: Settings) => {
-		// stop playback when the selected language just got hidden —
+		// stop playback when the hearing language just got hidden —
 		// otherwise the sound would keep playing with no card left to stop it
-		if (next.hiddenLanguages.includes(lang)) {
+		if (next.hiddenLanguages.includes(hearingLang)) {
 			stopSound()
 		}
 
@@ -176,18 +187,21 @@ function App() {
 	// on the chosen first day
 	const DAYS = orderDays(ALL_DAYS, settings.firstDay)
 
-	// if the selected language gets hidden in settings, fall back to the first visible one
+	// if a selected language gets hidden in settings, fall back to the first visible one
 	useEffect(() => {
-		if (LANGUAGES.length > 0 && !LANGUAGES.some(l => l.code === lang)) {
-			setLang(LANGUAGES[0].code)
-			setName('')
+		if (LANGUAGES.length > 0) {
+			if (!LANGUAGES.some(l => l.code === visualLang)) setVisualLang(LANGUAGES[0].code)
+			if (!LANGUAGES.some(l => l.code === hearingLang)) {
+				setHearingLang(LANGUAGES[0].code)
+				setName('')
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [settings.hiddenLanguages])
 
 	const playSound = useCallback(async (code: string) => {
 		try {
-			const blob = await getAudioBlob(`/sound/lang/${lang}/${code}.aac`)
+			const blob = await getAudioBlob(`/sound/lang/${hearingLang}/${code}.aac`)
 			if (!blob) return
 			const objectUrl = URL.createObjectURL(blob)
 			if (playingAudio.current) {
@@ -206,7 +220,7 @@ function App() {
 		} catch (e) {
 			console.error(e)
 		}
-	}, [lang, refreshCacheCount])
+	}, [hearingLang, refreshCacheCount])
 
 	// play a day sound without touching the play-icon UI (used by the game).
 	// Reads from the cache (IndexedDB, works in Safari Lockdown) or the network.
@@ -267,7 +281,7 @@ function App() {
 		// pre-load every prompt sound before the game begins, so gameplay never waits
 		// on the network (cached in IndexedDB, which also works in Safari Lockdown)
 		setPreparing(true)
-		await ensureCached(board.map(d => `/sound/lang/${lang}/${d.code}.aac`))
+		await ensureCached(board.map(d => `/sound/lang/${hearingLang}/${d.code}.aac`))
 		refreshCacheCount()
 		setPreparing(false)
 		const first = randomOf(board)
@@ -282,7 +296,7 @@ function App() {
 		gameStart.current = Date.now()
 		setTarget(first.code)
 		setGameOn(true)
-		playFile(`/sound/lang/${lang}/${first.code}.aac`)
+		playFile(`/sound/lang/${hearingLang}/${first.code}.aac`)
 	}
 
 	const endGame = () => {
@@ -331,7 +345,7 @@ function App() {
 			const next = randomOf(remaining)
 			setTarget(next.code)
 			// let the feedback land before the next prompt
-			promptTimer.current = setTimeout(() => playFile(`/sound/lang/${lang}/${next.code}.aac`), 650)
+			promptTimer.current = setTimeout(() => playFile(`/sound/lang/${hearingLang}/${next.code}.aac`), 650)
 		}
 	}
 
@@ -380,27 +394,44 @@ function App() {
 				>
 					🎮
 				</button>
-				<select
-					className="language-select"
-					title="Language of the day name"
-					value={lang}
-					disabled={gameOn}
-					onChange={(e) => {
-						setLang(e.target.value as Language)
-						setName('')
-						stopSound()
-					}}
-				>
-					{LANGUAGES.map(l => (
-						<option key={`lang-${l.code}`} value={l.code}>{l.display}</option>
-					))}
-				</select>
+				<label className="lang-picker" title="Display language: the day names shown on the cards">
+					<span className="lang-picker-icon" aria-hidden="true">👁️</span>
+					<select
+						className="language-select"
+						aria-label="Display language"
+						value={visualLang}
+						disabled={gameOn}
+						onChange={(e) => setVisualLang(e.target.value as Language)}
+					>
+						{LANGUAGES.map(l => (
+							<option key={`visual-${l.code}`} value={l.code}>{l.display}</option>
+						))}
+					</select>
+				</label>
+				<label className="lang-picker" title="Sound language: what you hear and guess">
+					<span className="lang-picker-icon" aria-hidden="true">🗣️</span>
+					<select
+						className="language-select"
+						aria-label="Sound language"
+						value={hearingLang}
+						disabled={gameOn}
+						onChange={(e) => {
+							setHearingLang(e.target.value as Language)
+							setName('')
+							stopSound()
+						}}
+					>
+						{LANGUAGES.map(l => (
+							<option key={`hearing-${l.code}`} value={l.code}>{l.display}</option>
+						))}
+					</select>
+				</label>
 				<SettingsPanel
 					settings={settings}
 					languages={ALL_LANGUAGES}
 					dayOptions={orderDays(ALL_DAYS, '1').map(d => ({
 						code: d.code,
-						label: LANGUAGES.length > 0 ? d.name[lang] : `Day ${d.code}`,
+						label: LANGUAGES.length > 0 ? d.name[visualLang] : `Day ${d.code}`,
 					}))}
 					caching={caching}
 					cachedCount={cachedCount}
@@ -419,7 +450,7 @@ function App() {
 						<button
 							key={`day-${d.code}`}
 							className={'button-day' + (playingCode === d.code ? ' playing' : '') + (isWrong ? ' wrong' : '')}
-							title={gameOn ? '' : (LANGUAGES.length > 0 ? d.name[lang] : '🤷‍♂️')}
+							title={gameOn ? '' : (LANGUAGES.length > 0 ? d.name[hearingLang] : '🤷‍♂️')}
 							disabled={isSolved || isGivenUp || isWrong}
 							onClick={() => {
 								if (gameOn) {
@@ -431,12 +462,14 @@ function App() {
 									setName('🤷‍♂️')
 								} else {
 									setResult(null)
-									setName(d.name[lang])
+									setName(d.name[hearingLang])
 									playSound(d.code)
 								}
 							}}
 						>
-							<span className="day-number">{d.code}</span>
+							{LANGUAGES.length > 0
+								? <span className="day-label">{d.name[visualLang]}</span>
+								: <span className="day-number">{d.code}</span>}
 							{playingCode === d.code && <span className="play-icon">▶</span>}
 							{isSolved && <span className="swatch-mark">👍</span>}
 							{isGivenUp && <span className="swatch-mark">🤷‍♂️</span>}
