@@ -403,7 +403,7 @@ function App() {
 					disabled={(!gameOn && !canPlayGame) || preparing}
 					onClick={() => (gameOn ? endGame() : startGame())}
 				>
-					🎮
+					🕹️
 				</button>
 				<label className="lang-picker" title="Display language: the day names shown on the cards">
 					<span className="lang-picker-icon" aria-hidden="true">👁️</span>
