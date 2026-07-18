@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.15.0
+
 ## 0.14.0
 - Initial release, versioned 0.14.0 to align with the sister projects
   [Colors](https://github.com/amerharb/colors) and

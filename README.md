@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.14.0-blue.svg)](https://github.com/amerharb/week)
+[![Version](https://img.shields.io/badge/version-0.15.0-blue.svg)](https://github.com/amerharb/week)
 # Week
 
 Small react project to show the days of the week (as numbered cards) and display
