@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Language } from './days/Day'
-import { Theme, SortMode, Settings } from './settingsStore'
+import { Theme, Settings } from './settingsStore'
 
 const THEME_OPTIONS: { value: Theme, icon: string, name: string }[] = [
 	{ value: 'system', icon: '🖥️', name: 'System' },
@@ -8,29 +8,24 @@ const THEME_OPTIONS: { value: Theme, icon: string, name: string }[] = [
 	{ value: 'dark', icon: '🌙', name: 'Dark' },
 ]
 
-const SORT_OPTIONS: { value: SortMode, icon: string, name: string }[] = [
-	{ value: 'order', icon: '📅', name: 'Sort by week order' },
-	{ value: 'lang', icon: '🗣️', name: 'Sort by selected language' },
-	{ value: 'random', icon: '🎲', name: 'Random order' },
-]
-
 type Props = {
 	settings: Settings,
-	// full (beta-filtered) lists, so the checklists always show everything supported
+	// full (beta-filtered) language list, so the checklist always shows everything supported
 	languages: { code: Language, display: string }[],
-	days: { code: string }[],
+	// the seven days in week order, labelled for the "first day" dropdown
+	dayOptions: { code: string, label: string }[],
 	// true while flight-mode downloads are running
 	caching: boolean,
 	// number of sound files currently in the cache
 	cachedCount: number,
-	// when true (game in progress), the language and day lists can't be changed
+	// when true (game in progress), the language list can't be changed
 	locked: boolean,
 	onChange: (settings: Settings) => void,
-	onSetSort: (mode: SortMode) => void,
+	onSetFirstDay: (code: string) => void,
 	onClearCache: () => void,
 }
 
-export default function SettingsPanel({ settings, languages, days, caching, cachedCount, locked, onChange, onSetSort, onClearCache }: Readonly<Props>) {
+export default function SettingsPanel({ settings, languages, dayOptions, caching, cachedCount, locked, onChange, onSetFirstDay, onClearCache }: Readonly<Props>) {
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -55,17 +50,8 @@ export default function SettingsPanel({ settings, languages, days, caching, cach
 		onChange({ ...settings, hiddenLanguages })
 	}
 
-	const toggleDay = (code: string) => {
-		const hiddenDays = settings.hiddenDays.includes(code)
-			? settings.hiddenDays.filter(c => c !== code)
-			: [...settings.hiddenDays, code]
-		onChange({ ...settings, hiddenDays })
-	}
-
 	const showAllLanguages = () => onChange({ ...settings, hiddenLanguages: [] })
 	const hideAllLanguages = () => onChange({ ...settings, hiddenLanguages: languages.map(l => l.code) })
-	const showAllDays = () => onChange({ ...settings, hiddenDays: [] })
-	const hideAllDays = () => onChange({ ...settings, hiddenDays: days.map(d => d.code) })
 
 	return (
 		<div className="settings" ref={containerRef}>
@@ -101,22 +87,22 @@ export default function SettingsPanel({ settings, languages, days, caching, cach
 					</div>
 
 					<div className="settings-row">
-						<div className="settings-segmented" role="group" aria-label="Sort days">
-							<span className="settings-segmented-icon" aria-hidden="true">⇵</span>
-							{SORT_OPTIONS.map(opt => (
-								<button
-									key={opt.value}
-									type="button"
-									className={settings.sortMode === opt.value ? 'segment selected' : 'segment'}
-									aria-pressed={settings.sortMode === opt.value}
-									aria-label={opt.name}
-									title={opt.name}
-									onClick={() => onSetSort(opt.value)}
-								>
-									{opt.icon}
-								</button>
-							))}
-						</div>
+						<label className="settings-firstday">
+							<span className="settings-firstday-label" title="The day the week starts on">
+								📅 1:
+							</span>
+							<select
+								className="language-select"
+								aria-label="First day of the week"
+								value={settings.firstDay}
+								disabled={locked}
+								onChange={(e) => onSetFirstDay(e.target.value)}
+							>
+								{dayOptions.map(o => (
+									<option key={`firstday-${o.code}`} value={o.code}>{o.label}</option>
+								))}
+							</select>
+						</label>
 					</div>
 
 					<div className="settings-row">
@@ -153,48 +139,6 @@ export default function SettingsPanel({ settings, languages, days, caching, cach
 										/>
 										{l.display}
 									</label>
-								)
-							})}
-						</div>
-					</div>
-
-					<div className="settings-row">
-						<div className="settings-select-all">
-							<button
-								type="button"
-								aria-label="Select all days"
-								title="Select all"
-								disabled={locked}
-								onClick={showAllDays}
-							>
-								✅
-							</button>
-							<button
-								type="button"
-								aria-label="Deselect all days"
-								title="Deselect all"
-								disabled={locked}
-								onClick={hideAllDays}
-							>
-								⬜
-							</button>
-						</div>
-						<div className="settings-day-grid" role="group" aria-label="Days">
-							{days.map(d => {
-								const shown = !settings.hiddenDays.includes(d.code)
-								return (
-									<button
-										key={`setting-day-${d.code}`}
-										type="button"
-										className={shown ? 'day-toggle' : 'day-toggle hidden'}
-										aria-pressed={shown}
-										aria-label={d.code}
-										title={d.code}
-										disabled={locked}
-										onClick={() => toggleDay(d.code)}
-									>
-										{d.code}
-									</button>
 								)
 							})}
 						</div>

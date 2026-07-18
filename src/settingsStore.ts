@@ -8,35 +8,24 @@ import { Language } from './days/Day'
 
 export type Theme = 'system' | 'light' | 'dark'
 
-// how the day cards are ordered on the main screen:
-//   'order'  — by week order / day number (the default: Sunday … Saturday)
-//   'lang'   — by the day's name in the selected language (falls back to order)
-//   'random' — a fixed random order (see Settings.randomOrder)
-export type SortMode = 'order' | 'lang' | 'random'
-
 export type Settings = {
 	theme: Theme,
-	// codes the user chose to hide from the main screen; empty = show everything,
-	// so newly added languages/days are visible by default
+	// language codes the user chose to hide from the main screen; empty = show
+	// everything, so newly added languages are visible by default
 	hiddenLanguages: Language[],
-	hiddenDays: string[],
 	// when on, all visible sounds are downloaded to the cache, and newly shown
-	// languages/days are cached as soon as they are enabled
+	// languages are cached as soon as they are enabled
 	flightMode: boolean,
-	// order the day cards are shown in on the main screen
-	sortMode: SortMode,
-	// the frozen random order (day codes) used when sortMode === 'random'.
-	// covers every day, including hidden ones, so a card keeps its slot when shown.
-	randomOrder: string[],
+	// day code ('1'..'7') the week starts on; the cards are shown in week order
+	// rotated so this day leads (default '1' = Sunday)
+	firstDay: string,
 }
 
 export const DEFAULT_SETTINGS: Settings = {
 	theme: 'system',
 	hiddenLanguages: [],
-	hiddenDays: [],
 	flightMode: false,
-	sortMode: 'order',
-	randomOrder: [],
+	firstDay: '1',
 }
 
 const STORAGE_KEY = 'week:settings'

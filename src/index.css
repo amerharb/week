@@ -310,13 +310,6 @@ button:active {
 	align-items: center;
 }
 
-/* small leading indicator (e.g. the sort ⇵) inside a segmented row */
-.settings-segmented-icon {
-	font-size: 20px;
-	line-height: 1;
-	flex: none;
-}
-
 .settings-segmented .segment {
 	flex: 1;
 	font-size: 20px;
@@ -333,42 +326,27 @@ button:active {
 	font-weight: 700;
 }
 
-/* days as a scrollable grid of number tiles; click toggles visibility */
-.settings-day-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
-	gap: 6px;
-	max-height: 190px;
-	overflow-y: auto;
-	border: 1px solid var(--border);
-	border-radius: 8px;
-	padding: 8px;
+/* "first day of the week" dropdown row */
+.settings-firstday {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	width: 100%;
 }
 
-.day-toggle {
-	aspect-ratio: 1;
-	padding: 0;
-	margin: 0;
-	border-radius: 6px;
-	border: 1px solid var(--border);
-	font-size: 18px;
-	font-weight: 700;
-	font-variant-numeric: tabular-nums;
+.settings-firstday-label {
+	font-size: 14px;
 }
 
-.day-toggle.hidden {
-	opacity: 0.35;
+.settings-firstday .language-select {
+	flex: none;
 }
 
 /* controls locked while a game is running */
-.day-toggle:disabled,
 .settings-select-all button:disabled {
 	opacity: 0.4;
 	cursor: not-allowed;
-}
-
-.day-toggle.hidden:disabled {
-	opacity: 0.2;
 }
 
 .settings-check:has(input:disabled) {

@@ -30,27 +30,25 @@ its name spoken and see it written in that language. Click the card again (▶ w
 it plays) to stop.
 
 - Settings (⚙️ top right): theme (system / light / dark, system is the default),
-  a language checklist and a day grid to show/hide anything on the main screen
-  (with ✅/⬜ select-all/deselect-all buttons), a sort setting (⇵: week order 📅,
-  by selected language 🗣️, or random 🎲), a flight mode toggle (✈️), and cache
-  info (🔊 count and a 🗑️ clear button). Saved in localStorage, remembered
-  between visits.
+  a language checklist to show/hide languages (with ✅/⬜ select-all/deselect-all
+  buttons), a "first day of the week" dropdown (📅) that rotates the cards to
+  start on the chosen day, a flight mode toggle (✈️), and cache info (🔊 count
+  and a 🗑️ clear button). Saved in localStorage, remembered between visits.
 - Flight mode (✈️): downloads all visible sounds into the browser's cache
   (IndexedDB) so they play offline; anything newly shown while it is on is
   downloaded right away. Turning it off keeps the cached files (🗑️ clears them).
 - Game (🎮 in the top bar): start a guessing game — a random day name is spoken
-  and you tap the matching card (👍 correct, 👎 wrong). Stuck? The give-up button
-  (🤷‍♂️) reveals it and plays a give-up sound (tracked separately from mistakes).
-  It runs through every visible day, then shows how many you played, your
-  mistakes, give-ups, and your time; press 🎮 again to stop early. Theme and
-  flight mode stay changeable mid-game; the language and day lists are locked.
-  Needs at least one language and one day visible.
+  and you tap the matching card (👍 correct, 👎 wrong). The cards stay in week
+  order (they are not shuffled). Stuck? The give-up button (🤷‍♂️) reveals it and
+  plays a give-up sound (tracked separately from mistakes). It runs through every
+  day, then shows how many you played, your mistakes, give-ups, and your time;
+  press 🎮 again to stop early. Theme, first day and flight mode stay changeable
+  mid-game; the language list is locked. Needs at least one language visible.
 - First visit: the starting language and which languages are shown come from your
   browser's language settings.
 
 ## URL parameters
 For a shareable/deep-linked view:
-- `d` — which days are shown, e.g. `?d=1,2,3` for Sunday–Tuesday.
 - `l` — which languages are shown, with the first one selected, e.g. `?l=en,ar`.
 
 List order does not affect the on-screen order.

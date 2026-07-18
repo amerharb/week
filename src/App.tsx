@@ -6,7 +6,6 @@ import { Day, Language } from './days/Day'
 import { isVisible } from './featureFlags'
 import {
 	Settings,
-	SortMode,
 	DEFAULT_SETTINGS,
 	loadSettings,
 	saveSettings,
@@ -22,34 +21,15 @@ import { thursday } from './days/5'
 import { friday } from './days/6'
 import { saturday } from './days/7'
 
-// Fisher–Yates shuffle into a new array (used to scramble the card positions on game start)
-function shuffle<T>(items: T[]): T[] {
-	const out = items.slice()
-	for (let i = out.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1))
-		;[out[i], out[j]] = [out[j], out[i]]
-	}
-	return out
-}
-
 const randomOf = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)]
 
-// Order the days for display. 'lang' sorts by the day name in the given
-// language (only when one is selected — otherwise falls back to order); 'random' uses
-// the frozen randomOrder (unknown codes go last); 'order' (default) sorts by day number.
-function sortDays(days: Day[], mode: SortMode, lang: Language, hasLanguage: boolean, randomOrder: string[]): Day[] {
-	const list = days.slice()
-	if (mode === 'lang' && hasLanguage) {
-		return list.sort((a, b) => a.name[lang].localeCompare(b.name[lang], lang) || a.code.localeCompare(b.code))
-	}
-	if (mode === 'random') {
-		const pos = (code: string) => {
-			const i = randomOrder.indexOf(code)
-			return i === -1 ? Number.MAX_SAFE_INTEGER : i
-		}
-		return list.sort((a, b) => pos(a.code) - pos(b.code) || a.code.localeCompare(b.code))
-	}
-	return list.sort((a, b) => a.code.localeCompare(b.code))
+// Order the days in week order (by day number), rotated so `firstDay` leads —
+// e.g. firstDay '2' (Monday) gives 2,3,4,5,6,7,1.
+function orderDays(days: Day[], firstDay: string): Day[] {
+	const sorted = days.slice().sort((a, b) => a.code.localeCompare(b.code))
+	const start = sorted.findIndex(d => d.code === firstDay)
+	if (start <= 0) return sorted // firstDay is the first day already (or not found)
+	return [...sorted.slice(start), ...sorted.slice(0, start)]
 }
 
 // short win/lose feedback sounds
@@ -104,18 +84,10 @@ function App() {
 	useEffect(() => {
 		let loaded = loadSettings()
 
-		// URL params override visibility for a shareable/deep-linked view:
-		//   ?d=1,2,3   -> only these days are visible
+		// URL param for a shareable/deep-linked view:
 		//   ?l=en,ar   -> only these languages are visible; the first is selected
-		// Order in the params does not affect the on-screen order.
+		// Order in the param does not affect the on-screen order.
 		const params = new URLSearchParams(window.location.search)
-
-		const dParam = params.get('d')
-		if (dParam !== null) {
-			const want = new Set(dParam.split(',').map(s => s.trim()).filter(Boolean))
-			const hiddenDays = ALL_DAYS.map(d => d.code).filter(c => !want.has(c))
-			loaded = { ...loaded, hiddenDays }
-		}
 
 		const lParam = params.get('l')
 		if (lParam !== null) {
@@ -169,34 +141,25 @@ function App() {
 	}, [refreshCacheCount])
 
 	const updateSettings = (next: Settings) => {
-		// stop playback when its day, or the selected language, just got hidden —
+		// stop playback when the selected language just got hidden —
 		// otherwise the sound would keep playing with no card left to stop it
-		if (
-			(playingCode && next.hiddenDays.includes(playingCode)) ||
-			next.hiddenLanguages.includes(lang)
-		) {
+		if (next.hiddenLanguages.includes(lang)) {
 			stopSound()
 		}
 
-		// flight mode: download what is (or becomes) visible
+		// flight mode: download the sounds for every visible language (all seven
+		// days are always shown, so only the language set can change)
 		const visibleLangs = ALL_LANGUAGES.filter(l => !next.hiddenLanguages.includes(l.code))
-		const visibleDays = ALL_DAYS.filter(d => !next.hiddenDays.includes(d.code))
-		const urlsFor = (langs: typeof visibleLangs, days: typeof visibleDays) =>
-			langs.flatMap(l => days.map(d => `/sound/lang/${l.code}/${d.code}.aac`))
+		const urlsFor = (langs: typeof visibleLangs) =>
+			langs.flatMap(l => ALL_DAYS.map(d => `/sound/lang/${l.code}/${d.code}.aac`))
 		if (next.flightMode && !settings.flightMode) {
 			// just switched on: cache everything currently visible
-			cacheAudioUrls(urlsFor(visibleLangs, visibleDays))
+			cacheAudioUrls(urlsFor(visibleLangs))
 		} else if (next.flightMode) {
-			// already on: cache only what just became visible
+			// already on: cache only the languages that just became visible
 			const newLangs = visibleLangs.filter(l => settings.hiddenLanguages.includes(l.code))
-			const newDays = visibleDays.filter(d => settings.hiddenDays.includes(d.code))
-			const oldLangs = visibleLangs.filter(l => !settings.hiddenLanguages.includes(l.code))
-			const urls = [
-				...urlsFor(newLangs, visibleDays),
-				...urlsFor(oldLangs, newDays),
-			]
-			if (urls.length > 0) {
-				cacheAudioUrls(urls)
+			if (newLangs.length > 0) {
+				cacheAudioUrls(urlsFor(newLangs))
 			}
 		}
 
@@ -205,20 +168,13 @@ function App() {
 		applyTheme(next.theme)
 	}
 
-	// choose a sort mode for the cards; choosing random reshuffles every time
-	const setSort = (mode: SortMode) => {
-		if (mode === 'random') {
-			updateSettings({ ...settings, sortMode: 'random', randomOrder: shuffle(ALL_DAYS.map(d => d.code)) })
-		} else {
-			updateSettings({ ...settings, sortMode: mode })
-		}
-	}
+	// choose which day the week starts on
+	const setFirstDay = (code: string) => updateSettings({ ...settings, firstDay: code })
 
 	const LANGUAGES = ALL_LANGUAGES.filter(l => !settings.hiddenLanguages.includes(l.code))
-	// what the main screen actually shows: all days sorted by the chosen mode,
-	// then filtered to the visible ones (hidden cards still hold their sorted slot)
-	const DAYS = sortDays(ALL_DAYS, settings.sortMode, lang, LANGUAGES.length > 0, settings.randomOrder)
-		.filter(d => !settings.hiddenDays.includes(d.code))
+	// what the main screen shows: all seven days in week order, rotated to start
+	// on the chosen first day
+	const DAYS = orderDays(ALL_DAYS, settings.firstDay)
 
 	// if the selected language gets hidden in settings, fall back to the first visible one
 	useEffect(() => {
@@ -274,7 +230,7 @@ function App() {
 
 	// ---- Game mode ----
 	const [gameOn, setGameOn] = useState(false)
-	const [gameDays, setGameDays] = useState<Day[]>([]) // shuffled board for this game
+	const [gameDays, setGameDays] = useState<Day[]>([]) // the board for this game (days in week order)
 	const [target, setTarget] = useState<string | null>(null)  // day code to find
 	const [solved, setSolved] = useState<string[]>([])         // codes already played (guessed or given up)
 	const [wrongGuesses, setWrongGuesses] = useState<string[]>([]) // wrong cards for the CURRENT target (temporarily disabled)
@@ -306,7 +262,8 @@ function App() {
 	const startGame = async () => {
 		if (!canPlayGame || preparing) return
 		stopSound()
-		const board = shuffle(DAYS)
+		// the board keeps the days in week order (no shuffle) — only the prompts are random
+		const board = DAYS
 		// pre-load every prompt sound before the game begins, so gameplay never waits
 		// on the network (cached in IndexedDB, which also works in Safari Lockdown)
 		setPreparing(true)
@@ -441,12 +398,15 @@ function App() {
 				<SettingsPanel
 					settings={settings}
 					languages={ALL_LANGUAGES}
-					days={ALL_DAYS.map(d => ({ code: d.code }))}
+					dayOptions={orderDays(ALL_DAYS, '1').map(d => ({
+						code: d.code,
+						label: LANGUAGES.length > 0 ? d.name[lang] : `Day ${d.code}`,
+					}))}
 					caching={caching}
 					cachedCount={cachedCount}
 					locked={gameOn}
 					onChange={updateSettings}
-					onSetSort={setSort}
+					onSetFirstDay={setFirstDay}
 					onClearCache={clearSoundCache}
 				/>
 			</div>
