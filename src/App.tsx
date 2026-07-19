@@ -1,5 +1,5 @@
 import './App.css'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import SettingsPanel from './SettingsPanel'
 import { Day, Language } from './days/Day'
@@ -414,6 +414,27 @@ function App() {
 	// so the week reads in the display language's direction — the first day on the right
 	const boardDir = LANGUAGES.length > 0 && ALL_LANGUAGES.find(l => l.code === visualLang)?.rtl ? 'rtl' : 'ltr'
 
+	// the display font shrinks (to a limit) before the marquee kicks in: measure
+	// the name at the stylesheet size and scale the font down to fit the segment;
+	// only a name that still overflows at the minimum font starts scrolling
+	const displayRef = useRef<HTMLHeadingElement | null>(null)
+	useLayoutEffect(() => {
+		const el = displayRef.current
+		const box = el?.parentElement
+		if (!el || !box) return
+		const fit = () => {
+			el.style.fontSize = '' // measure at the stylesheet size first
+			const base = parseFloat(getComputedStyle(el).fontSize)
+			if (el.scrollWidth > box.clientWidth) {
+				el.style.fontSize = `${Math.max(18, base * box.clientWidth / el.scrollWidth)}px`
+			}
+		}
+		fit()
+		const ro = new ResizeObserver(fit)
+		ro.observe(box)
+		return () => ro.disconnect()
+	}, [displayText])
+
 	return (
 		<div className="Week">
 			{/* the app bar's four segments sit right-to-left: toolbar, display,
@@ -491,7 +512,7 @@ function App() {
 				/>
 				</div>
 				<div className="display">
-					<h1 className="display-text">
+					<h1 className="display-text" ref={displayRef}>
 						{preparing ? '⏳' : displayText}
 					</h1>
 				</div>
