@@ -40,6 +40,8 @@ When the display language is right-to-left (Arabic), the day cards are laid out
 right-to-left as well, so the week reads in that language's direction — the first
 day of the week on the right.
 
+- Mute (🔊/🔇, right of 🕹️): silences everything — names, game prompts and
+  feedback sounds — until clicked again.
 - Settings (⚙️ top right): theme (system / light / dark, system is the default),
   a language checklist to show/hide languages (with ✅/⬜ select-all/deselect-all
   buttons), a "first day of the week" dropdown (📅) that rotates the cards to
@@ -55,7 +57,8 @@ day of the week on the right.
   plays a give-up sound (tracked separately from mistakes). It runs through every
   day, with your progress (played,
   mistakes, give-ups, time) shown live in the app bar next to the round
-  buttons. When every day has been played the round is over — the clock
+  buttons. The prompted name is also written in the display segment (even
+  while muted), and the 👂 button plays it again. When every day has been played the round is over — the clock
   freezes and the score stays — but game mode stays on: ✋ stops a round
   early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme, first day and flight mode stay changeable
   mid-game; the language list is locked. Needs at least one language visible.
