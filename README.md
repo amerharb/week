@@ -61,7 +61,9 @@ day of the week on the right.
   while muted), and the 👂 button plays it again. When every day has been played the round is over — the clock
   freezes and the score stays — but game mode stays on: ✋ stops a round
   early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme, first day and flight mode stay changeable
-  mid-game; the language list is locked. Needs at least one language visible.
+  mid-game; the language list is locked, and the selected languages can be
+  changed only between rounds (after ✋ or when a round finishes). Needs at
+  least one language visible.
 - First visit: the starting language and which languages are shown come from your
   browser's language settings.
 

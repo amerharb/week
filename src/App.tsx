@@ -237,7 +237,7 @@ function App() {
 							className="language-select"
 							aria-label="Display language"
 							value={visualLang}
-							disabled={game.gameOn}
+							disabled={game.target !== null}
 							onChange={(e) => setVisualLang(e.target.value as Language)}
 						>
 							{LANGUAGES.map(l => (
@@ -251,7 +251,7 @@ function App() {
 							className="language-select"
 							aria-label="Sound language"
 							value={hearingLang}
-							disabled={game.gameOn}
+							disabled={game.target !== null}
 							onChange={(e) => {
 								setHearingLang(e.target.value as Language)
 								setName('')
