@@ -17,6 +17,7 @@ import { ensureCached, idbCount, idbClear } from './audioCache'
 import { useAudio } from './useAudio'
 import { useGame } from './useGame'
 import { useFitText } from './useFitText'
+import { translator } from './i18n'
 import { sunday } from './days/1'
 import { monday } from './days/2'
 import { tuesday } from './days/3'
@@ -199,6 +200,10 @@ function App() {
 	// so the week reads in the display language's direction — the first day on the right
 	const boardDir = LANGUAGES.length > 0 && ALL_LANGUAGES.find(l => l.code === visualLang)?.rtl ? 'rtl' : 'ltr'
 
+	// UI-string translator, following the display (visual) language — the app
+	// language — falling back to English
+	const t = translator(visualLang)
+
 	// shrink the display font before falling back to the marquee
 	const displayRef = useFitText(displayText)
 
@@ -210,12 +215,12 @@ function App() {
 				<div className="toolbar">
 					<button
 						className={(game.gameOn ? 'game-toggle on' : 'game-toggle') + (game.preparing ? ' busy' : '')}
-						aria-label={game.gameOn ? 'End game mode' : 'Start game'}
+						aria-label={game.gameOn ? t('game.end') : t('game.start')}
 						aria-pressed={game.gameOn}
 						title={
 							game.gameOn
-								? 'End game mode'
-								: (game.canPlay ? 'Start game' : 'Select at least one language and day to play')
+								? t('game.end')
+								: (game.canPlay ? t('game.start') : t('game.selectToPlay'))
 						}
 						disabled={(!game.gameOn && !game.canPlay) || game.preparing}
 						onClick={() => (game.gameOn ? game.exitGame() : game.startRound())}
@@ -224,18 +229,18 @@ function App() {
 					</button>
 					<button
 						className={audio.muted ? 'mute-toggle on' : 'mute-toggle'}
-						aria-label={audio.muted ? 'Unmute' : 'Mute'}
+						aria-label={audio.muted ? t('mute.unmute') : t('mute.mute')}
 						aria-pressed={audio.muted}
-						title={audio.muted ? 'Unmute sounds' : 'Mute all sounds'}
+						title={audio.muted ? t('mute.unmuteTitle') : t('mute.muteTitle')}
 						onClick={audio.toggleMute}
 					>
 						{audio.muted ? '🔇' : '🔊'}
 					</button>
-					<label className="lang-picker" title="Display language: the day names shown on the cards">
+					<label className="lang-picker" title={t('lang.display')}>
 						<span className="lang-picker-icon" aria-hidden="true">👁️</span>
 						<select
 							className="language-select"
-							aria-label="Display language"
+							aria-label={t('lang.displayAria')}
 							value={visualLang}
 							disabled={game.target !== null}
 							onChange={(e) => setVisualLang(e.target.value as Language)}
@@ -245,11 +250,11 @@ function App() {
 							))}
 						</select>
 					</label>
-					<label className="lang-picker" title="Sound language: what you hear and guess">
+					<label className="lang-picker" title={t('lang.sound')}>
 						<span className="lang-picker-icon" aria-hidden="true">🗣️</span>
 						<select
 							className="language-select"
-							aria-label="Sound language"
+							aria-label={t('lang.soundAria')}
 							value={hearingLang}
 							disabled={game.target !== null}
 							onChange={(e) => {
@@ -273,6 +278,7 @@ function App() {
 						caching={caching}
 						cachedCount={cachedCount}
 						locked={game.gameOn}
+						t={t}
 						onChange={updateSettings}
 						onSetFirstDay={setFirstDay}
 						onClearCache={clearSoundCache}
@@ -285,7 +291,7 @@ function App() {
 				</div>
 				{game.gameOn && (
 					<GameScore
-						playedTitle="Days played"
+						t={t}
 						played={game.solved.length}
 						total={game.board.length}
 						mistakes={game.mistakes}
@@ -295,6 +301,7 @@ function App() {
 				)}
 				{game.gameOn && (
 					<GameActions
+						t={t}
 						roundActive={game.target !== null}
 						muted={audio.muted}
 						preparing={game.preparing}

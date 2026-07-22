@@ -1,6 +1,11 @@
 # Changelog
 
 ## [0.16.0] 2026-07-20
+### Added
+- Localize the interface: all UI text (button tooltips, the "select a language
+  and day to play" hint, settings labels, game score/actions) now lives in
+  `src/i18n/*.json` and follows the selected display language (English, Arabic,
+  German, Swedish translated; others fall back to English)
 ### Changed
 - In game mode with the round stopped (finished or ✋), the selected language
   can be changed again — the next 🔄 round uses it. It stays locked while a
