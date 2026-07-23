@@ -4,8 +4,25 @@
 ### Added
 - Localize the interface: all UI text (button tooltips, the "select a language
   and day to play" hint, settings labels, game score/actions) now lives in
-  `src/i18n/*.json` and follows the selected display language (English, Arabic,
-  German, Swedish translated; others fall back to English)
+  `src/i18n/*.json`, falling back to English for any missing string
+- Add an interface-language dropdown (👁️) to the settings panel with the four
+  localized languages (English, Arabic, German, Swedish). It is a persisted
+  setting, independent of the sound (content) language in the toolbar, and it
+  drives everything you read: the day names on the cards, the first-day
+  dropdown labels, the layout direction (right-to-left for Arabic) and every
+  UI string. On first run it follows the browser (primary language, then any
+  of the browser's languages, else the content-language pick, else English)
+- Show the sound-language names (toolbar dropdown and settings checklist) in
+  the current interface language — e.g. "Arabic" in an English UI, "Arabisch"
+  in a German UI — falling back to the native name for any untranslated pair,
+  and sorted alphabetically by that displayed name (using the UI language's
+  collation). The interface-language dropdown itself keeps native names
+  (English, عربي, Deutsch, Svenska) so it is always self-findable
+### Removed
+- Remove the toolbar's display-language dropdown (👁️): the day names shown on
+  the cards, the first-day labels and the layout direction now follow the
+  interface language chosen in settings. The remaining toolbar dropdown (🗣️)
+  is the single sound (content) language — what is played and guessed
 ### Changed
 - In game mode with the round stopped (finished or ✋), the selected language
   can be changed again — the next 🔄 round uses it. It stays locked while a

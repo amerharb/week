@@ -34,10 +34,13 @@
 	"group.languages": "Sprachen",
 	"game.selectToPlay": "Wähle mindestens eine Sprache und einen Tag zum Spielen",
 	"score.played": "Gespielte Tage",
-	"lang.display": "Anzeigesprache: die Tagesnamen auf den Karten",
+	"uiLanguage": "Oberflächensprache",
 	"lang.sound": "Tonsprache: was du hörst und rätst",
-	"lang.displayAria": "Anzeigesprache",
 	"lang.soundAria": "Tonsprache",
 	"firstDay.aria": "Erster Tag der Woche",
-	"firstDay.title": "Der Tag, an dem die Woche beginnt"
+	"firstDay.title": "Der Tag, an dem die Woche beginnt",
+	"language.en": "Englisch",
+	"language.ar": "Arabisch",
+	"language.de": "Deutsch",
+	"language.sv": "Schwedisch"
 }

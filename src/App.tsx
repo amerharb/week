@@ -17,7 +17,7 @@ import { ensureCached, idbCount, idbClear } from './audioCache'
 import { useAudio } from './useAudio'
 import { useGame } from './useGame'
 import { useFitText } from './useFitText'
-import { translator } from './i18n'
+import { translator, languageName, UI_LANGUAGES } from './i18n'
 import { sunday } from './days/1'
 import { monday } from './days/2'
 import { tuesday } from './days/3'
@@ -82,8 +82,7 @@ function App() {
 			const hiddenLanguages = ALL_LANGUAGES.map(l => l.code).filter(c => !want.includes(c))
 			loaded = { ...loaded, hiddenLanguages }
 			if (want.length > 0) {
-				// first listed = selected for both the visual and hearing language
-				setVisualLang(want[0] as Language)
+				// first listed = the selected sound (content) language
 				setHearingLang(want[0] as Language)
 			}
 		}
@@ -93,15 +92,11 @@ function App() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	// two selected languages:
-	//   visualLang  — the display/app language: the day name shown on each card and
-	//                 the labels in the settings (first-day dropdown). Falls back to
-	//                 the plain day number (1–7) when no language is visible.
-	//   hearingLang — the sound language: what is played on click / in the game, what
-	//                 is written under the card on click, and what the player guesses.
-	// They may be the same. Both default to the browser's preferred language on first
-	// load (the fallback effect below keeps them pointing at a visible language).
-	const [visualLang, setVisualLang] = useState<Language>(() => preferredLanguage())
+	// the sound (content) language: what is played on click / in the game, what
+	// is written under the card on click, and what the player guesses. Defaults to
+	// the browser's preferred language on first load (the fallback effect below
+	// keeps it pointing at a visible language). The day names shown on the cards
+	// and the layout direction follow the interface language (settings.uiLanguage).
 	const [hearingLang, setHearingLang] = useState<Language>(() => preferredLanguage())
 	const [name, setName] = useState('')
 
@@ -162,14 +157,11 @@ function App() {
 	// on the chosen first day
 	const DAYS = orderDays(ALL_DAYS, settings.firstDay)
 
-	// if a selected language gets hidden in settings, fall back to the first visible one
+	// if the sound language gets hidden in settings, fall back to the first visible one
 	useEffect(() => {
-		if (LANGUAGES.length > 0) {
-			if (!LANGUAGES.some(l => l.code === visualLang)) setVisualLang(LANGUAGES[0].code)
-			if (!LANGUAGES.some(l => l.code === hearingLang)) {
-				setHearingLang(LANGUAGES[0].code)
-				setName('')
-			}
+		if (LANGUAGES.length > 0 && !LANGUAGES.some(l => l.code === hearingLang)) {
+			setHearingLang(LANGUAGES[0].code)
+			setName('')
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [settings.hiddenLanguages])
@@ -196,13 +188,20 @@ function App() {
 	const displayText = game.gameOn && game.target !== null
 		? (game.board.find(d => d.code === game.target)?.name[hearingLang] ?? '')
 		: name
-	// lay the cards out right-to-left when the display language is RTL (e.g. Arabic),
-	// so the week reads in the display language's direction — the first day on the right
-	const boardDir = LANGUAGES.length > 0 && ALL_LANGUAGES.find(l => l.code === visualLang)?.rtl ? 'rtl' : 'ltr'
+	// lay the cards out right-to-left when the interface language is RTL (e.g. Arabic),
+	// so the week reads in the interface language's direction — the first day on the right
+	const boardDir = ALL_LANGUAGES.find(l => l.code === settings.uiLanguage)?.rtl ? 'rtl' : 'ltr'
 
-	// UI-string translator, following the display (visual) language — the app
-	// language — falling back to English
-	const t = translator(visualLang)
+	// UI-string translator, following the interface language, falling back to English
+	const t = translator(settings.uiLanguage)
+	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as Language })
+
+	// content (sound) language names shown in the interface language — e.g. "Arabic"
+	// in an English UI, "Arabisch" in a German UI — falling back to the native name,
+	// then sorted alphabetically by that displayed name using the UI's collation
+	const localizedContent = (list: { code: Language, display: string }[]) => list
+		.map(l => ({ code: l.code, display: languageName(t, l.code, l.display) }))
+		.sort((a, b) => a.display.localeCompare(b.display, settings.uiLanguage))
 
 	// shrink the display font before falling back to the marquee
 	const displayRef = useFitText(displayText)
@@ -236,22 +235,7 @@ function App() {
 					>
 						{audio.muted ? '🔇' : '🔊'}
 					</button>
-					<label className="lang-picker" title={t('lang.display')}>
-						<span className="lang-picker-icon" aria-hidden="true">👁️</span>
-						<select
-							className="language-select"
-							aria-label={t('lang.displayAria')}
-							value={visualLang}
-							disabled={game.target !== null}
-							onChange={(e) => setVisualLang(e.target.value as Language)}
-						>
-							{LANGUAGES.map(l => (
-								<option key={`visual-${l.code}`} value={l.code}>{l.display}</option>
-							))}
-						</select>
-					</label>
 					<label className="lang-picker" title={t('lang.sound')}>
-						<span className="lang-picker-icon" aria-hidden="true">🗣️</span>
 						<select
 							className="language-select"
 							aria-label={t('lang.soundAria')}
@@ -263,22 +247,25 @@ function App() {
 								audio.stopSound()
 							}}
 						>
-							{LANGUAGES.map(l => (
+							{localizedContent(LANGUAGES).map(l => (
 								<option key={`hearing-${l.code}`} value={l.code}>{l.display}</option>
 							))}
 						</select>
 					</label>
 					<SettingsPanel
 						settings={settings}
-						languages={ALL_LANGUAGES}
+						languages={localizedContent(ALL_LANGUAGES)}
 						dayOptions={orderDays(ALL_DAYS, '1').map(d => ({
 							code: d.code,
-							label: LANGUAGES.length > 0 ? d.name[visualLang] : `Day ${d.code}`,
+							label: d.name[settings.uiLanguage],
 						}))}
 						caching={caching}
 						cachedCount={cachedCount}
 						locked={game.gameOn}
 						t={t}
+						uiLanguage={settings.uiLanguage}
+						uiLanguages={UI_LANGUAGES}
+						onSetUiLanguage={setUiLanguage}
 						onChange={updateSettings}
 						onSetFirstDay={setFirstDay}
 						onClearCache={clearSoundCache}
@@ -337,9 +324,7 @@ function App() {
 								}
 							}}
 						>
-							{LANGUAGES.length > 0
-								? <span className="day-label">{d.name[visualLang]}</span>
-								: <span className="day-number">{d.code}</span>}
+							<span className="day-label">{d.name[settings.uiLanguage]}</span>
 							{audio.playingCode === d.code && <span className="play-icon">▶</span>}
 							{isSolved && <span className="swatch-mark">👍</span>}
 							{isGivenUp && <span className="swatch-mark">🤷‍♂️</span>}

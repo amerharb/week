@@ -34,10 +34,13 @@
 	"group.languages": "اللغات",
 	"game.selectToPlay": "اختر لغة ويومًا واحدًا على الأقل للعب",
 	"score.played": "الأيام الملعوبة",
-	"lang.display": "لغة العرض: أسماء الأيام على البطاقات",
+	"uiLanguage": "لغة الواجهة",
 	"lang.sound": "لغة الصوت: ما تسمعه وتخمّنه",
-	"lang.displayAria": "لغة العرض",
 	"lang.soundAria": "لغة الصوت",
 	"firstDay.aria": "أول يوم في الأسبوع",
-	"firstDay.title": "اليوم الذي يبدأ به الأسبوع"
+	"firstDay.title": "اليوم الذي يبدأ به الأسبوع",
+	"language.en": "الإنجليزية",
+	"language.ar": "العربية",
+	"language.de": "الألمانية",
+	"language.sv": "السويدية"
 }

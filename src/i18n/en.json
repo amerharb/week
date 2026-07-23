@@ -34,10 +34,13 @@
 	"group.languages": "Languages",
 	"game.selectToPlay": "Select at least one language and day to play",
 	"score.played": "Days played",
-	"lang.display": "Display language: the day names shown on the cards",
+	"uiLanguage": "Interface language",
 	"lang.sound": "Sound language: what you hear and guess",
-	"lang.displayAria": "Display language",
 	"lang.soundAria": "Sound language",
 	"firstDay.aria": "First day of the week",
-	"firstDay.title": "The day the week starts on"
+	"firstDay.title": "The day the week starts on",
+	"language.en": "English",
+	"language.ar": "Arabic",
+	"language.de": "German",
+	"language.sv": "Swedish"
 }

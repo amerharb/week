@@ -34,10 +34,13 @@
 	"group.languages": "Språk",
 	"game.selectToPlay": "Välj minst ett språk och en dag för att spela",
 	"score.played": "Spelade dagar",
-	"lang.display": "Visningsspråk: dagsnamnen som visas på korten",
+	"uiLanguage": "Gränssnittsspråk",
 	"lang.sound": "Ljudspråk: det du hör och gissar",
-	"lang.displayAria": "Visningsspråk",
 	"lang.soundAria": "Ljudspråk",
 	"firstDay.aria": "Veckans första dag",
-	"firstDay.title": "Dagen då veckan börjar"
+	"firstDay.title": "Dagen då veckan börjar",
+	"language.en": "Engelska",
+	"language.ar": "Arabiska",
+	"language.de": "Tyska",
+	"language.sv": "Svenska"
 }

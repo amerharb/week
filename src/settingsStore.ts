@@ -10,6 +10,10 @@ export type Theme = 'system' | 'light' | 'dark'
 
 export type Settings = {
 	theme: Theme,
+	// the interface language: the day names shown on the cards, the first-day
+	// dropdown labels, the layout direction (RTL for Arabic) and every UI string.
+	// Independent of the content (sound) language chosen in the toolbar.
+	uiLanguage: Language,
 	// language codes the user chose to hide from the main screen; empty = show
 	// everything, so newly added languages are visible by default
 	hiddenLanguages: Language[],
@@ -23,6 +27,7 @@ export type Settings = {
 
 export const DEFAULT_SETTINGS: Settings = {
 	theme: 'system',
+	uiLanguage: 'en',
 	hiddenLanguages: [],
 	flightMode: false,
 	firstDay: '1',
@@ -45,6 +50,21 @@ export function preferredLanguage(): Language {
 	return tagToLanguage(tag) ?? 'en'
 }
 
+// the browser's preferred interface language: its primary language, then any of
+// its other languages, then the content-language pick, else English. (Here the
+// UI-language set is every supported language, so this mirrors preferredLanguage,
+// but it is kept separate to match the sister projects.)
+export function preferredUiLanguage(): Language {
+	const primary = tagToLanguage((typeof navigator !== 'undefined' && navigator.language) || '')
+	if (primary) return primary
+	const tags = (typeof navigator !== 'undefined' && navigator.languages) || []
+	for (const tag of tags) {
+		const m = tagToLanguage(tag)
+		if (m) return m
+	}
+	return preferredLanguage()
+}
+
 // first-run settings: show only the browser's languages (navigator.languages) plus
 // the preferred one; everything else starts hidden
 function firstRunSettings(): Settings {
@@ -52,7 +72,7 @@ function firstRunSettings(): Settings {
 	const visible = new Set<Language>(tags.map(tagToLanguage).filter(Boolean) as Language[])
 	visible.add(preferredLanguage())
 	const hiddenLanguages = SPOKEN_LANGUAGES.filter(code => !visible.has(code))
-	return { ...DEFAULT_SETTINGS, hiddenLanguages }
+	return { ...DEFAULT_SETTINGS, uiLanguage: preferredUiLanguage(), hiddenLanguages }
 }
 
 export function loadSettings(): Settings {
