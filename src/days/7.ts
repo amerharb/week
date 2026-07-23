@@ -7,5 +7,6 @@ export const saturday: Day = {
 		ar: 'السبت',
 		de: 'Samstag',
 		sv: 'Lördag',
+		uk: 'Субота',
 	},
 }

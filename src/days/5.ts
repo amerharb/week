@@ -7,5 +7,6 @@ export const thursday: Day = {
 		ar: 'الخميس',
 		de: 'Donnerstag',
 		sv: 'Torsdag',
+		uk: 'Четвер',
 	},
 }

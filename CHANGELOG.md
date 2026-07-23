@@ -18,11 +18,15 @@
   and sorted alphabetically by that displayed name (using the UI language's
   collation). The interface-language dropdown itself keeps native names
   (English, عربي, Deutsch, Svenska) so it is always self-findable
+- Add Ukrainian (Українська) as a content (sound) language, with the day names
+  and Microsoft Edge neural recordings (uk-UA-Polina) for all seven days (beta —
+  remove the `beta` flag to promote to production)
 ### Removed
 - Remove the toolbar's display-language dropdown (👁️): the day names shown on
   the cards, the first-day labels and the layout direction now follow the
-  interface language chosen in settings. The remaining toolbar dropdown (🗣️)
-  is the single sound (content) language — what is played and guessed
+  interface language chosen in settings. The remaining toolbar dropdown is the
+  single sound (content) language — what is played and guessed — and it no
+  longer carries the 🗣️ icon, since there is nothing left to distinguish it from
 ### Changed
 - In game mode with the round stopped (finished or ✋), the selected language
   can be changed again — the next 🔄 round uses it. It stays locked while a

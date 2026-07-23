@@ -43,6 +43,7 @@ function App() {
 		{ code: 'ar', display: 'عربي', rtl: true },
 		{ code: 'de', display: 'Deutsch' },
 		{ code: 'sv', display: 'Svenska' },
+		{ code: 'uk', display: 'Українська', beta: true },
 	]
 	const ALL_LANGUAGES = LANGUAGE_DEFS.filter(isVisible)
 

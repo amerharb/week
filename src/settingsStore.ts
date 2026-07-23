@@ -36,7 +36,7 @@ export const DEFAULT_SETTINGS: Settings = {
 const STORAGE_KEY = 'week:settings'
 
 // all supported languages that a browser locale can match
-const SPOKEN_LANGUAGES: Language[] = ['en', 'ar', 'de', 'sv']
+const SPOKEN_LANGUAGES: Language[] = ['en', 'ar', 'de', 'sv', 'uk']
 
 // map a BCP-47 tag (e.g. "en-US", "sv") to one of our language codes, or null
 function tagToLanguage(tag: string): Language | null {
