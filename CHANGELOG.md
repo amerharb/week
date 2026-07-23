@@ -21,6 +21,10 @@
 - Add Ukrainian (Українська) as a content (sound) language, with the day names
   and Microsoft Edge neural recordings (uk-UA-Polina) for all seven days (beta —
   remove the `beta` flag to promote to production)
+- Add Hebrew (עברית) as a content (sound) language, with the day names and
+  Microsoft Edge neural recordings (he-IL-Hila) for all seven days. It is a
+  content language only — the interface stays limited to the four localized UI
+  languages (beta — remove the `beta` flag to promote to production)
 ### Removed
 - Remove the toolbar's display-language dropdown (👁️): the day names shown on
   the cards, the first-day labels and the layout direction now follow the

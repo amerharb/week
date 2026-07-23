@@ -8,5 +8,6 @@ export const tuesday: Day = {
 		de: 'Dienstag',
 		sv: 'Tisdag',
 		uk: 'Вівторок',
+		he: 'יום שלישי',
 	},
 }
