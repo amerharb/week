@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.16.0] 2026-07-20
+## [0.16.0] 2026-07-25
 ### Added
 - Localize the interface: all UI text (button tooltips, the "select a language
   and day to play" hint, settings labels, game score/actions) now lives in
@@ -19,12 +19,11 @@
   collation). The interface-language dropdown itself keeps native names
   (English, عربي, Deutsch, Svenska) so it is always self-findable
 - Add Ukrainian (Українська) as a content (sound) language, with the day names
-  and Microsoft Edge neural recordings (uk-UA-Polina) for all seven days (beta —
-  remove the `beta` flag to promote to production)
+  and Microsoft Edge neural recordings (uk-UA-Polina) for all seven days
 - Add Hebrew (עברית) as a content (sound) language, with the day names and
-  Microsoft Edge neural recordings (he-IL-Hila) for all seven days. It is a
-  content language only — the interface stays limited to the four localized UI
-  languages (beta — remove the `beta` flag to promote to production)
+  Microsoft Edge neural recordings (he-IL-Hila) for all seven days. Both are
+  content languages only — the interface stays limited to the four localized UI
+  languages
 ### Removed
 - Remove the toolbar's display-language dropdown (👁️): the day names shown on
   the cards, the first-day labels and the layout direction now follow the
