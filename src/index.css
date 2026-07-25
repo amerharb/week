@@ -453,6 +453,23 @@ button:active {
 	font-weight: 700;
 }
 
+/* interface-language dropdown row */
+.settings-uilang {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.settings-uilang-icon {
+	font-size: 20px;
+	line-height: 1;
+	flex: none;
+}
+
+.settings-uilang .language-select {
+	flex: 1;
+}
+
 /* "first day of the week" dropdown row */
 .settings-firstday {
 	display: flex;

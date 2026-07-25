@@ -2,10 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { Language } from './days/Day'
 import { Theme, Settings } from './settingsStore'
 
-const THEME_OPTIONS: { value: Theme, icon: string, name: string }[] = [
-	{ value: 'system', icon: '🖥️', name: 'System' },
-	{ value: 'light', icon: '☀️', name: 'Light' },
-	{ value: 'dark', icon: '🌙', name: 'Dark' },
+// structural type so this stays app-agnostic (no import from i18n)
+type Translate = (key: string) => string
+
+const THEME_OPTIONS: { value: Theme, icon: string, key: string }[] = [
+	{ value: 'system', icon: '🖥️', key: 'theme.system' },
+	{ value: 'light', icon: '☀️', key: 'theme.light' },
+	{ value: 'dark', icon: '🌙', key: 'theme.dark' },
 ]
 
 type Props = {
@@ -20,12 +23,18 @@ type Props = {
 	cachedCount: number,
 	// when true (game in progress), the language list can't be changed
 	locked: boolean,
+	// UI-string translator (falls back to English)
+	t: Translate,
+	// the current interface language and the options for its dropdown
+	uiLanguage: string,
+	uiLanguages: { code: string, display: string }[],
+	onSetUiLanguage: (code: string) => void,
 	onChange: (settings: Settings) => void,
 	onSetFirstDay: (code: string) => void,
 	onClearCache: () => void,
 }
 
-export default function SettingsPanel({ settings, languages, dayOptions, caching, cachedCount, locked, onChange, onSetFirstDay, onClearCache }: Readonly<Props>) {
+export default function SettingsPanel({ settings, languages, dayOptions, caching, cachedCount, locked, t, uiLanguage, uiLanguages, onSetUiLanguage, onChange, onSetFirstDay, onClearCache }: Readonly<Props>) {
 	const [open, setOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -58,26 +67,26 @@ export default function SettingsPanel({ settings, languages, dayOptions, caching
 			<button
 				type="button"
 				className={open ? 'settings-button open' : 'settings-button'}
-				aria-label="Settings"
+				aria-label={t('settings.title')}
 				aria-expanded={open}
-				title="Settings"
+				title={t('settings.title')}
 				onClick={() => setOpen(o => !o)}
 			>
 				⚙️
 			</button>
 
 			{open && (
-				<div className="settings-panel" role="dialog" aria-label="Settings">
+				<div className="settings-panel" role="dialog" aria-label={t('settings.title')}>
 					<div className="settings-row">
-						<div className="settings-segmented" role="group" aria-label="Theme">
+						<div className="settings-segmented" role="group" aria-label={t('group.theme')}>
 							{THEME_OPTIONS.map(opt => (
 								<button
 									key={opt.value}
 									type="button"
 									className={settings.theme === opt.value ? 'segment selected' : 'segment'}
 									aria-pressed={settings.theme === opt.value}
-									aria-label={opt.name}
-									title={opt.name}
+									aria-label={t(opt.key)}
+									title={t(opt.key)}
 									onClick={() => setTheme(opt.value)}
 								>
 									{opt.icon}
@@ -87,13 +96,30 @@ export default function SettingsPanel({ settings, languages, dayOptions, caching
 					</div>
 
 					<div className="settings-row">
+						<label className="settings-uilang">
+							<span className="settings-uilang-icon" aria-hidden="true">👁️</span>
+							<select
+								className="language-select"
+								aria-label={t('uiLanguage')}
+								title={t('uiLanguage')}
+								value={uiLanguage}
+								onChange={(e) => onSetUiLanguage(e.target.value)}
+							>
+								{uiLanguages.map(l => (
+									<option key={`ui-${l.code}`} value={l.code}>{l.display}</option>
+								))}
+							</select>
+						</label>
+					</div>
+
+					<div className="settings-row">
 						<label className="settings-firstday">
-							<span className="settings-firstday-label" title="The day the week starts on">
+							<span className="settings-firstday-label" title={t('firstDay.title')}>
 								📅 1:
 							</span>
 							<select
 								className="language-select"
-								aria-label="First day of the week"
+								aria-label={t('firstDay.aria')}
 								value={settings.firstDay}
 								disabled={locked}
 								onChange={(e) => onSetFirstDay(e.target.value)}
@@ -109,8 +135,8 @@ export default function SettingsPanel({ settings, languages, dayOptions, caching
 						<div className="settings-select-all">
 							<button
 								type="button"
-								aria-label="Select all languages"
-								title="Select all"
+								aria-label={t('selectAllLanguages')}
+								title={t('selectAll')}
 								disabled={locked}
 								onClick={showAllLanguages}
 							>
@@ -118,15 +144,15 @@ export default function SettingsPanel({ settings, languages, dayOptions, caching
 							</button>
 							<button
 								type="button"
-								aria-label="Deselect all languages"
-								title="Deselect all"
+								aria-label={t('deselectAllLanguages')}
+								title={t('deselectAll')}
 								disabled={locked}
 								onClick={hideAllLanguages}
 							>
 								⬜
 							</button>
 						</div>
-						<div className="settings-checklist" role="group" aria-label="Languages">
+						<div className="settings-checklist" role="group" aria-label={t('group.languages')}>
 							{languages.map(l => {
 								const shown = !settings.hiddenLanguages.includes(l.code)
 								return (
@@ -152,23 +178,23 @@ export default function SettingsPanel({ settings, languages, dayOptions, caching
 								+ (settings.flightMode ? ' on' : '')
 								+ (caching ? ' busy' : '')
 							}
-							aria-label="flight mode"
+							aria-label={t('flight.label')}
 							aria-pressed={settings.flightMode}
-							title="Flight mode: cache all visible sounds"
+							title={t('flight.title')}
 							onClick={() => onChange({ ...settings, flightMode: !settings.flightMode })}
 						>
 							✈️
 						</button>
-						<span className="settings-cache-count" title="Cached sound files">
+						<span className="settings-cache-count" title={t('cache.count')}>
 							🔊 {cachedCount}
 						</span>
 						<button
 							type="button"
 							className="settings-cache-clear"
-							aria-label="Clear sound cache"
+							aria-label={t('cache.clear')}
 							title={settings.flightMode
-								? 'Clear sound cache (not available in flight mode)'
-								: 'Clear sound cache: delete the downloaded sound files'}
+								? t('cache.clearTitleDisabled')
+								: t('cache.clearTitle')}
 							disabled={settings.flightMode || caching}
 							onClick={onClearCache}
 						>
