@@ -10,6 +10,7 @@ export const friday: Day = {
 		sv: 'Fredag',
 		th: 'วันศุกร์',
 		tr: 'Cuma',
+		zh: '星期五',
 		uk: 'П’ятниця',
 		he: 'יום שישי',
 	},

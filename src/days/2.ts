@@ -10,6 +10,7 @@ export const monday: Day = {
 		sv: 'Måndag',
 		th: 'วันจันทร์',
 		tr: 'Pazartesi',
+		zh: '星期一',
 		uk: 'Понеділок',
 		he: 'יום שני',
 	},

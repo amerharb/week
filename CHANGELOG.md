@@ -2,6 +2,10 @@
 
 ## [0.17.0] (unreleased)
 ### Added
+- Add Simplified Chinese (简体中文) as an interface language, bringing every
+  sister project to the same eight: English, Arabic, German, Greek, Swedish,
+  Thai, Turkish and Simplified Chinese
+  The day cards read in Chinese too (星期日 … 星期六)
 - Add Greek (Ελληνικά), Thai (ไทย) and Turkish (Türkçe) as interface languages,
   bringing every sister project to the same seven: English, Arabic, German,
   Greek, Swedish, Thai and Turkish

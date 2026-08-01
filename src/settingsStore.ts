@@ -45,7 +45,7 @@ function uiTagToCode(tag: string): UiLanguage | null {
 	return (UI_LANGUAGE_CODES as string[]).includes(primary) ? primary as UiLanguage : null
 }
 
-const UI_LANGUAGE_CODES: UiLanguage[] = ['en', 'ar', 'de', 'el', 'sv', 'th', 'tr']
+const UI_LANGUAGE_CODES: UiLanguage[] = ['en', 'ar', 'de', 'el', 'sv', 'th', 'tr', 'zh']
 
 // map a BCP-47 tag (e.g. "en-US", "sv") to one of the given codes, or null
 function tagToCode(tag: string, set: readonly Language[]): Language | null {
