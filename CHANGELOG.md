@@ -2,6 +2,12 @@
 
 ## [0.17.0] (unreleased)
 ### Added
+- Add Greek (Ελληνικά), Thai (ไทย) and Turkish (Türkçe) as interface languages,
+  bringing every sister project to the same seven: English, Arabic, German,
+  Greek, Swedish, Thai and Turkish
+- The interface language is now its own set, separate from the content
+  (day-name) languages: the day cards read in Greek, Thai and Turkish too, while
+  Ukrainian and Hebrew stay content-only
 - Two new round sounds: a rising fanfare when a round is played to the end, and
   a softer two-tone when the player ends it early with ⏹️
 - Keep a result per finished round while game mode is on — `{ solved, total,

@@ -4,6 +4,7 @@
  * sending the data on every request). Stored as one JSON blob under STORAGE_KEY
  * so new settings can be added over time without new storage keys.
  */
+import { UiLanguage } from './i18n'
 import { Language } from './days/Day'
 
 export type Theme = 'system' | 'light' | 'dark'
@@ -13,7 +14,7 @@ export type Settings = {
 	// the interface language: the day names shown on the cards, the first-day
 	// dropdown labels, the layout direction (RTL for Arabic) and every UI string.
 	// Independent of the content (sound) language chosen in the toolbar.
-	uiLanguage: Language,
+	uiLanguage: UiLanguage,
 	// language codes the user chose to hide from the main screen; empty = show
 	// everything, so newly added languages are visible by default
 	hiddenLanguages: Language[],
@@ -38,7 +39,13 @@ const STORAGE_KEY = 'week:settings'
 // every content (sound) language a browser locale can match
 const SPOKEN_LANGUAGES: Language[] = ['en', 'ar', 'de', 'sv', 'uk', 'he']
 // the subset offered as interface languages (those with an i18n dictionary)
-const UI_LANGUAGE_CODES: Language[] = ['en', 'ar', 'de', 'sv']
+// map a BCP-47 tag to one of the interface languages, or null
+function uiTagToCode(tag: string): UiLanguage | null {
+	const primary = tag.toLowerCase().split('-')[0]
+	return (UI_LANGUAGE_CODES as string[]).includes(primary) ? primary as UiLanguage : null
+}
+
+const UI_LANGUAGE_CODES: UiLanguage[] = ['en', 'ar', 'de', 'el', 'sv', 'th', 'tr']
 
 // map a BCP-47 tag (e.g. "en-US", "sv") to one of the given codes, or null
 function tagToCode(tag: string, set: readonly Language[]): Language | null {
@@ -56,16 +63,16 @@ export function preferredLanguage(): Language {
 //   1) the browser's primary language, if a supported UI language
 //   2) else the first of the browser's other languages that is a UI language
 //   3) else the content-language pick if it is a UI language, else English
-export function preferredUiLanguage(): Language {
-	const primary = tagToCode((typeof navigator !== 'undefined' && navigator.language) || '', UI_LANGUAGE_CODES)
+export function preferredUiLanguage(): UiLanguage {
+	const primary = uiTagToCode((typeof navigator !== 'undefined' && navigator.language) || '')
 	if (primary) return primary
 	const tags = (typeof navigator !== 'undefined' && navigator.languages) || []
 	for (const tag of tags) {
-		const m = tagToCode(tag, UI_LANGUAGE_CODES)
+		const m = uiTagToCode(tag)
 		if (m) return m
 	}
 	const content = preferredLanguage()
-	return (UI_LANGUAGE_CODES as string[]).includes(content) ? content : 'en'
+	return (UI_LANGUAGE_CODES as string[]).includes(content) ? content as UiLanguage : 'en'
 }
 
 // first-run settings: show only the browser's languages (navigator.languages) plus
