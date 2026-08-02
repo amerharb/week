@@ -17,7 +17,7 @@ import { ensureCached, idbCount, idbClear } from './audioCache'
 import { useAudio } from './useAudio'
 import { useGame } from './useGame'
 import { useFitText } from './useFitText'
-import { translator, languageName, UI_LANGUAGES } from './i18n'
+import { translator, languageName, UI_LANGUAGES, UiLanguage } from './i18n'
 import { sunday } from './days/1'
 import { monday } from './days/2'
 import { tuesday } from './days/3'
@@ -181,6 +181,8 @@ function App() {
 			refreshCacheCount()
 		},
 		audio,
+		// a round is labelled by the sound language it was played in
+		mode: hearingLang,
 		onRoundStart: () => setName(''),
 	})
 
@@ -192,11 +194,11 @@ function App() {
 		: name
 	// lay the cards out right-to-left when the interface language is RTL (e.g. Arabic),
 	// so the week reads in the interface language's direction — the first day on the right
-	const boardDir = ALL_LANGUAGES.find(l => l.code === settings.uiLanguage)?.rtl ? 'rtl' : 'ltr'
+	const boardDir = UI_LANGUAGES.find(l => l.code === settings.uiLanguage)?.rtl ? 'rtl' : 'ltr'
 
 	// UI-string translator, following the interface language, falling back to English
 	const t = translator(settings.uiLanguage)
-	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as Language })
+	const setUiLanguage = (code: string) => updateSettings({ ...settings, uiLanguage: code as UiLanguage })
 
 	// content (sound) language names shown in the interface language — e.g. "Arabic"
 	// in an English UI, "Arabisch" in a German UI — falling back to the native name,
@@ -296,8 +298,7 @@ function App() {
 						preparing={game.preparing}
 						onReplay={game.replay}
 						onGiveUp={game.giveUp}
-						onStop={game.stopRound}
-						onRestart={game.startRound}
+						onToggleRound={game.toggleRound}
 					/>
 				)}
 			</header>
@@ -321,7 +322,7 @@ function App() {
 									// every language is hidden: nothing to say
 									setName('🤷‍♂️')
 								} else {
-									setName(d.name[hearingLang])
+									setName(d.name[hearingLang] ?? d.name.en)
 									audio.play(dayUrl(d.code), d.code)
 								}
 							}}

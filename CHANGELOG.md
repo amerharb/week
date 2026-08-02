@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.17.0] 2026-08-03
+### Fixed
+- Correct the README: it still described two dropdowns (👁️ display and 🗣️
+  sound). There is one sound dropdown; the card faces follow the interface
+  language
+### Added
+- Add Simplified Chinese (简体中文) as an interface language, bringing every
+  sister project to the same eight: English, Arabic, German, Greek, Swedish,
+  Thai, Turkish and Simplified Chinese
+  The day cards read in Chinese too (星期日 … 星期六)
+- Add Greek (Ελληνικά), Thai (ไทย) and Turkish (Türkçe) as interface languages,
+  bringing every sister project to the same seven: English, Arabic, German,
+  Greek, Swedish, Thai and Turkish
+- The interface language is now its own set, separate from the content
+  (day-name) languages: the day cards read in Greek, Thai and Turkish too, while
+  Ukrainian and Hebrew stay content-only
+- Two new round sounds: a rising fanfare when a round is played to the end, and
+  a softer two-tone when the player ends it early with ⏹️
+- Keep a result per finished round while game mode is on — `{ solved, total,
+  elapsedMs, mistakes, giveUps, mode }`, where `mode` records which
+  language/anthem type it was played in. A round that ran to the end is simply
+  one where `solved === total`. The list is cleared on leaving game mode
+### Changed
+- Merge the ✋ stop and 🔄 restart buttons into one media-style control: it shows
+  ⏹️ while a round is running and ▶️ once it has ended, so the same spot always
+  stops or starts
+
 ## [0.16.0] 2026-07-25
 ### Added
 - Localize the interface: all UI text (button tooltips, the "select a language

@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.16.0-blue.svg)](https://github.com/amerharb/week)
+[![Version](https://img.shields.io/badge/version-0.17.0-blue.svg)](https://github.com/amerharb/week)
 # Week
 
 Small react project to show the days of the week (as numbered cards) and display
@@ -19,26 +19,31 @@ Days are numbered 1–7 starting on Sunday; the number is the card face and the
 sound file name.
 
 ## Languages supported
+Spoken (what you hear and guess):
 - English
 - Arabic
 - German
 - Swedish
+- Ukrainian
+- Hebrew
+
+The interface is separately available in eight languages: English, Arabic,
+German, Greek, Swedish, Thai, Turkish and Simplified Chinese.
 
 ## How it works
-There are two language dropdowns in the top right:
-- 👁️ **Display language** — the day name shown on each card (and the labels in the
-  settings). Falls back to the plain day number (1–7) when no language is visible.
-- 🗣️ **Sound language** — what is spoken when you click a card (and what you guess
-  in the game), plus the name written under the cards on click.
+One dropdown in the top right picks the **sound language** — what is spoken when
+you click a card (and what you guess in the game), plus the name written under
+the cards on click.
 
-They can be the same or different (e.g. see the days in English while hearing and
-learning them in German). Click a day card to hear its name in the sound language
-and see that name written below; click the card again (▶ while it plays) to stop.
-If every language is hidden, the cards fall back to numbers and no sound plays.
+The day names on the cards follow the **interface language** instead, chosen in
+settings (👁️). So you can read the days in English while hearing and learning
+them in German. Click a day card to hear its name and see it written below;
+click the card again (▶ while it plays) to stop. If every sound language is
+hidden, no sound plays.
 
-When the display language is right-to-left (Arabic), the day cards are laid out
-right-to-left as well, so the week reads in that language's direction — the first
-day of the week on the right.
+When the interface language is right-to-left (Arabic), the day cards are laid
+out right-to-left as well, so the week reads in that language's direction — the
+first day of the week on the right.
 
 - Mute (🔊/🔇, right of 🕹️): silences everything — names, game prompts and
   feedback sounds — until clicked again.
