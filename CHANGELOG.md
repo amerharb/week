@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.17.0] (unreleased)
+## [0.17.0] 2026-08-03
+### Fixed
+- Correct the README: it still described two dropdowns (👁️ display and 🗣️
+  sound). There is one sound dropdown; the card faces follow the interface
+  language
 ### Added
 - Add Simplified Chinese (简体中文) as an interface language, bringing every
   sister project to the same eight: English, Arabic, German, Greek, Swedish,
