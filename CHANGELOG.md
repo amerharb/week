@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0] (unreleased)
+### Changed
+- **This project has moved into the sawt monorepo**
+  (<https://github.com/amerharb/sawt>), at `apps/week`.
+  This repository is archived and read-only: it holds the history up to the
+  move, and all later work happens in `sawt`.
+
 ## [0.17.0] 2026-08-03
 ### Fixed
 - Correct the README: it still described two dropdowns (👁️ display and 🗣️
