@@ -1,4 +1,14 @@
-[![Version](https://img.shields.io/badge/version-0.17.0-blue.svg)](https://github.com/amerharb/week)
+> [!IMPORTANT]
+> **This repository has moved.**
+>
+> Week now lives in the [**sawt**](https://github.com/amerharb/sawt)
+> monorepo, at [`apps/week`](https://github.com/amerharb/sawt/tree/main/apps/week),
+> alongside its four sister apps and a shared landing page.
+>
+> This repository is archived and read-only. It keeps the history up to the
+> move; everything after it happens in `sawt`.
+
+[![Version](https://img.shields.io/badge/version-0.18.0-blue.svg)](https://github.com/amerharb/week)
 # Week
 
 Small react project to show the days of the week (as numbered cards) and display
@@ -64,10 +74,10 @@ first day of the week on the right.
   mistakes, give-ups, time) shown live in the app bar next to the round
   buttons. The prompted name is also written in the display segment (even
   while muted), and the 👂 button plays it again. When every day has been played the round is over — the clock
-  freezes and the score stays — but game mode stays on: ✋ stops a round
-  early, 🔄 starts a fresh one, and pressing 🕹️ again leaves game mode. Theme, first day and flight mode stay changeable
+  freezes and the score stays — but game mode stays on: ⏹️ stops a round that is
+  running and ▶️ starts the next, and pressing 🕹️ again leaves game mode. Theme, first day and flight mode stay changeable
   mid-game; the language list is locked, and the selected languages can be
-  changed only between rounds (after ✋ or when a round finishes). Needs at
+  changed only between rounds (after ⏹️ or when a round finishes). Needs at
   least one language visible.
 - First visit: the starting language and which languages are shown come from your
   browser's language settings.
@@ -113,7 +123,8 @@ To add a language:
 ## Credits
 ### For sound
 Day name pronunciations synthesized with Microsoft Edge neural text-to-speech
-voices: English (Ava), Arabic (Amany), German (Katja) and Swedish (Sofie).
+voices: English (Ava), Arabic (Amany), German (Katja), Swedish (Sofie),
+Ukrainian (Polina) and Hebrew (Hila).
 The game's correct/wrong/give-up feedback sounds are shared with the
 [Colors](https://github.com/amerharb/colors) and
 [Flags](https://github.com/amerharb/flags) sister projects.
